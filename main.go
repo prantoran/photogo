@@ -4,28 +4,37 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 )
 
-func handlerFunc(w http.ResponseWriter, r *http.Request) {
+func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if r.URL.Path == "/" {
-		fmt.Fprint(w, "<h1>Welcome to my awesome diary!</h1>")
-	} else if r.URL.Path == "/contact" {
-		fmt.Fprint(w, "To get in touch, please send an email to <a href=\"mailto:prantoran@gmail.com\">prantoran@gmail.com</a>.")
-	} else {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(w, "<h1>We could not find the page you were looking for :(</h1><p>Please email to us if you keep being sent to an invalid page.</p>")
-	}
+	fmt.Fprint(w, "<h1>Welcome to my awesome diary!</h1>")
 }
 
-func Hello(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	fmt.Fprintf(w, "hello, %s\n", ps.ByName("name"))
+func contact(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprint(w, "To get in touch, please send an email to <a href=\"mailto:prantoran@gmail.com\">prantoran@gmail.com</a>.")
+}
+
+func faq(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprint(w, "<h1>Frequently asked questions</h1><p>Here is a list of question that our users commonly ask.</p>")
+}
+
+func notFound(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusNotFound)
+	fmt.Fprint(w, "<h1>Sorry but we could not find the page you were looking for.</h1>")
+
 }
 
 func main() {
-	router := httprouter.New()
-	// router.GET("/", Index)
-	router.GET("/hello/:name", Hello)
-	http.ListenAndServe(":3000", router)
+	r := mux.NewRouter()
+	r.NotFoundHandler = http.HandlerFunc(notFound)
+	r.HandleFunc("/", home)
+	r.HandleFunc("/contact", contact)
+	r.HandleFunc("/faq", faq)
+
+	http.ListenAndServe(":3000", r)
 }
