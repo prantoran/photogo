@@ -5,21 +5,37 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/prantoran/photogo/views"
+)
+
+var (
+	homeView    *views.View
+	contactView *views.View
+	faqView     *views.View
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<h1>Welcome to my awesome diary!</h1>")
+	err := homeView.Template.ExecuteTemplate(w, homeView.Layout, nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func contact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "To get in touch, please send an email to <a href=\"mailto:prantoran@gmail.com\">prantoran@gmail.com</a>.")
+	err := contactView.Template.ExecuteTemplate(w, contactView.Layout, nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func faq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<h1>Frequently asked questions</h1><p>Here is a list of question that our users commonly ask.</p>")
+	err := faqView.Template.ExecuteTemplate(w, faqView.Layout, nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func notFound(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +46,10 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	homeView = views.NewView("bootstrap", "views/home.gohtml")
+	contactView = views.NewView("bootstrap", "views/contact.gohtml")
+	faqView = views.NewView("bootstrap", "views/faq.gohtml")
+
 	r := mux.NewRouter()
 	r.NotFoundHandler = http.HandlerFunc(notFound)
 	r.HandleFunc("/", home)
