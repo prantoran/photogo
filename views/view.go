@@ -2,6 +2,7 @@ package views
 
 import (
 	"html/template"
+	"net/http"
 	"path/filepath"
 )
 
@@ -35,4 +36,9 @@ func layoutFiles() []string {
 type View struct {
 	Template *template.Template
 	Layout   string
+}
+
+// Render view with predefined layout
+func (v *View) Render(w http.ResponseWriter, data interface{}) error {
+	return v.Template.ExecuteTemplate(w, v.Layout, data)
 }
