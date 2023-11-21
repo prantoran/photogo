@@ -14,6 +14,8 @@ go mod tidy
 #### Install
 ```bash
 go install github.com/cosmtrek/air@latest
+go get github.com/gorilla/mux
+go get github.com/gorilla/schema
 ```
 #### Run directly
 ```
