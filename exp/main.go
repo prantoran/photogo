@@ -24,11 +24,14 @@ func main() {
 
 	defer db.Close()
 
-	_, err = db.Exec(`
+	var id int
+	err = db.QueryRow(`
 		INSERT INTO users(name, email)
 		VALUES($1, $2)
-		RETURNING id`, "Pinku", "prantoran@gmail.com")
+		RETURNING id`, "Pinku", "prantoran@gmail.com").Scan(&id)
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println("id: ", id)
 }
