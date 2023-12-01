@@ -22,11 +22,13 @@ func main() {
 		panic(err)
 	}
 
-	err = db.Ping()
+	defer db.Close()
+
+	_, err = db.Exec(`
+		INSERT INTO users(name, email)
+		VALUES($1, $2)
+		RETURNING id`, "Pinku", "prantoran@gmail.com")
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println("successfully connected")
-	db.Close()
 }
