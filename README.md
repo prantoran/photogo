@@ -78,3 +78,11 @@ Select * from users;
 1. Kill and remove the docker containers
 2. Configure `docker-compose.yml`
 3. Restart docker compose
+
+
+### `sql` package
+For using this package, we need [sql drivers](https://github.com/golang/go/wiki/SQLDrivers) for PostGres
+```bash
+go get -u github.com/lib/pq
+```
+PQ driver doc: http://godoc.org/github.com/lib/pq
