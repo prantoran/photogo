@@ -26,3 +26,55 @@ air --build.cmd "go build ." --build.bin "./photogo"
 air init
 air
 ```
+
+## Postgres
+### Start
+```
+docker-compose up -d
+```
+#### Stop
+```
+docker-compose down
+```
+#### Commands
+```
+docker exec -it PostgresCont bash
+psql -U postgres
+psql
+> CREATE DATABASE photogo_db;
+```
+- Connect to database
+```
+postgres=# \c photogo_db
+```
+output:
+```
+You are now connected to database "photogo_db" as user "postgres".
+photogo_db=#
+```
+- Crate tables
+```
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    email TEXT NOT NULL 
+);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    amount INT,
+    description TEXT
+);
+```
+- Selects
+```
+Select * from users;
+```
+
+
+#### Debugging
+> `postgres` role does not exists
+1. Kill and remove the docker containers
+2. Configure `docker-compose.yml`
+3. Restart docker compose
