@@ -72,7 +72,54 @@ func selectQuery(db *sql.DB) {
 		users = append(users, user)
 		fmt.Println("id: ", user.ID, "name:", user.Name, "email:", user.Email)
 	}
+
+	if rows.Err() != nil {
+		// handle the err!
+	}
 	fmt.Println(users)
+}
+
+func insertExec(db *sql.DB) {
+	for i := 1; i <= 6; i++ {
+		userID := 1
+		if i > 3 {
+			userID = 3
+		}
+		amount := i * 100
+		description := fmt.Sprintf("Day: %d", i)
+
+		_, err := db.Exec(`
+			INSERT INTO orders(user_id, amount, description)
+			VALUES ($1, $2, $3)`, userID, amount, description)
+
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func joinExec(db *sql.DB) {
+
+	rows, err := db.Query(`
+		SELECT users.id, users.email, users.name, orders.id, orders.amount, orders.description FROM users
+		INNER JOIN orders ON users.id=orders.user_id`)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		var userID, orderID, amount int
+		var email, name, desc string
+		if err := rows.Scan(&userID, &email, &name, &orderID, &amount, &desc); err != nil {
+			panic(err)
+		}
+		fmt.Println("userID:", userID, "email:", email, "name:", name, "orderID:", orderID, "amount:", amount, "desc:", desc)
+	}
+
+	if rows.Err() != nil {
+		panic(rows.Err())
+	}
 }
 
 func main() {
@@ -86,6 +133,7 @@ func main() {
 
 	// insertQueryRow(db)
 	// selectQueryRow(db)
-	selectQuery(db)
-
+	// selectQuery(db)
+	// insertExec(db)
+	joinExec(db)
 }
