@@ -71,6 +71,11 @@ CREATE TABLE orders (
 ```
 Select * from users;
 ```
+- Drop tables
+```
+DROP TABLE users;
+DROP TABLE orders;
+```
 
 
 #### Debugging
@@ -78,3 +83,11 @@ Select * from users;
 1. Kill and remove the docker containers
 2. Configure `docker-compose.yml`
 3. Restart docker compose
+
+
+### GORM
+- Install
+```
+go get -u gorm.io/gorm
+go get -u gorm.io/driver/postgres
+```
