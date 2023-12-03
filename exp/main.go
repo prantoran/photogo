@@ -53,6 +53,22 @@ func main() {
 	// Migrate the schema, creates the table `users`
 	db.AutoMigrate(&User{})
 
+	var u User
+	if err := db.Where("email = ?", "blah@blah").First(&u).Error; err != nil {
+		switch err {
+		case gorm.ErrRecordNotFound:
+			fmt.Println("No user found!")
+		default:
+			panic(err)
+		}
+	}
+
+	// selectFirstLast(db)
+	// checkGormModelEmbedding()
+	// insertUser(db)
+}
+
+func selectFirstLast(db *gorm.DB) {
 	var u, v, w User
 	db.First(&u)
 	fmt.Println(u)
@@ -65,9 +81,6 @@ func main() {
 	db.Find(&users)
 	fmt.Println(len(users))
 	fmt.Println(users)
-
-	// checkGormModelEmbedding()
-	// insertUser(db)
 }
 
 func checkGormModelEmbedding() {
