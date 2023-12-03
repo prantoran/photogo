@@ -23,8 +23,16 @@ const (
 
 type User struct {
 	gorm.Model
-	Name  string
-	Email string `gorm:"not null;uniqueIndex"` // creates unique index `idx_users_email`
+	Name   string
+	Email  string `gorm:"not null;uniqueIndex"` // creates unique index `idx_users_email`
+	Orders []Order
+}
+
+type Order struct {
+	gorm.Model
+	UserID      uint
+	Amount      int
+	Description string
 }
 
 func main() {
@@ -51,8 +59,39 @@ func main() {
 	// db.Migrator().DropTable(&User{}) // drop table if exists
 
 	// Migrate the schema, creates the table `users`
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&User{}, &Order{})
 
+	var u User
+	if err := db.Preload("Orders").First(&u).Error; err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+
+	fmt.Println(u)
+
+	// createOrder(db, u, 1001, "fake desc #1")
+	// createOrder(db, u, 1002, "fake desc #2")
+	// createOrder(db, u, 1003, "fake desc #3")
+
+	// errorHandling(db)
+	// selectFirstLast(db)
+	// checkGormModelEmbedding()
+	// insertUser(db)
+}
+
+func createOrder(db *gorm.DB, user User, amount int, desc string) {
+	err := db.Create(&Order{
+		UserID:      user.ID,
+		Amount:      amount,
+		Description: desc,
+	}).Error
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func errorHandling(db *gorm.DB) {
 	var u User
 	if err := db.Where("email = ?", "blah@blah").First(&u).Error; err != nil {
 		switch err {
@@ -62,10 +101,6 @@ func main() {
 			panic(err)
 		}
 	}
-
-	// selectFirstLast(db)
-	// checkGormModelEmbedding()
-	// insertUser(db)
 }
 
 func selectFirstLast(db *gorm.DB) {
