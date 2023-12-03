@@ -53,6 +53,24 @@ func main() {
 	// Migrate the schema, creates the table `users`
 	db.AutoMigrate(&User{})
 
+	var u, v, w User
+	db.First(&u)
+	fmt.Println(u)
+	db.Last(&v)
+	fmt.Println(v)
+	db.Where("id = ?", v.ID).First(&w)
+	fmt.Println(w)
+
+	var users []User
+	db.Find(&users)
+	fmt.Println(len(users))
+	fmt.Println(users)
+
+	// checkGormModelEmbedding()
+	// insertUser(db)
+}
+
+func checkGormModelEmbedding() {
 	user := User{
 		Model: gorm.Model{
 			ID:        1,
@@ -61,6 +79,9 @@ func main() {
 	}
 
 	fmt.Println("user.ID:", user.ID, "user.CreatedAt:", user.CreatedAt, "user.Model.CreatedAt:", user.Model.CreatedAt)
+}
+
+func insertUser(db *gorm.DB) {
 	name, email := getInfo()
 	u := User{
 		Name:  name,
